@@ -1,4 +1,4 @@
-Question:
+Question 1:
 Input:-			
 	
 Employee:-		
@@ -27,3 +27,24 @@ on x.value=e.empId
 )
 select dept_name,string_agg(skills, ',') as skills_list from
 cte group by dept_name
+
+======================================================================================================================================
+Question 2:
+Find the employees with salaries greater than the manager's salary
+emp_id	emp_name	salary	manager_id
+1	Ankit		1000	4
+2	Mohit		1500	5
+3	Vikash		1000	4
+4	Rohit		500	2
+5	Mudit		1200	6
+6	Agam		1200	2
+7	Sanjay		900	2
+8	Ashish		500	2
+
+Answer:
+Select a.empId,a.name,a.sal,b.sal from EMPLOYEE a 
+join EMPLOYEE b 
+on a.man_id=b.empId and a.sal>b.sal 
+
+
+
