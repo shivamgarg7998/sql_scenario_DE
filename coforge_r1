@@ -1,0 +1,29 @@
+Question:
+Input:-			
+	
+Employee:-		
+	emp_id	Name	Skills         
+	1	       abc	spark,scala
+	2	       pqr	hive
+	3	       xyz	screening
+	
+Department:-		
+	dept_id	dept_name emp_ids 
+	abc1	      IT	   1,2
+	abc2	      HR	   3
+
+Output:-			
+	dept_name	skills	
+	IT	        spark, scala, hive	
+	HR	        screening
+
+
+Solution:
+with cte as 
+(select * from Dept cross apply string_split(emp_ids,',') x
+join
+EMPLOYEE e
+on x.value=e.empId
+)
+select dept_name,string_agg(skills, ',') as skills_list from
+cte group by dept_name
