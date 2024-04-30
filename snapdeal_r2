@@ -1,0 +1,142 @@
+Question: Write units sold on the corresponding day and if a specific product is not sold on a particular day enter the unit sold on the previous day for that day.
+Write a python code for the same.
+Input:
+Table1:
+date	product 	unit
+01-04-2024	A	10
+01-04-2024	B	20
+01-04-2024	C	30
+01-04-2024	D	40
+01-04-2024	E	50
+
+Table 2:
+DATE	PRODUCT	UNIT
+02-04-2024	A	10
+02-04-2024	C	40
+02-04-2024	E	30
+
+Table 3:
+DATE	PRODUCT	UNIT
+03-04-2024	B	90
+03-04-2024	D	80
+
+Output:
+date	product 	unit
+01-04-2024	A	10
+01-04-2024	B	20
+01-04-2024	C	30
+01-04-2024	D	40
+01-04-2024	E	50
+02-04-2024	A	10
+02-04-2024	B	20
+02-04-2024	C	40
+02-04-2024	D	40
+02-04-2024	E	30
+03-04-2024	A	10
+03-04-2024	B	90
+03-04-2024	C	40
+03-04-2024	D	80
+03-04-2024	E	30
+
+Code:
+import pandas as pd
+import numpy as np
+tb1 = pd.DataFrame({
+    'date': ['01-04-2024', '01-04-2024', '01-04-2024', '01-04-2024', '01-04-2024'],
+    'product': ['A', 'B', 'C', 'D', 'E'],
+    'unit': [10, 20, 30, 40, 50]
+})
+
+tb2 = pd.DataFrame({
+    'date': ['02-04-2024', '02-04-2024', '02-04-2024'],
+    'product': ['A', 'C', 'E'],
+    'unit': [10, 40, 30]
+})
+
+tb3 = pd.DataFrame({
+    'date': ['03-04-2024', '03-04-2024'],
+    'product': ['B', 'D'],
+    'unit': [90, 80]
+})
+
+tableB_only= pd.merge(tb2,tb1,how='outer',on='product',indicator=True,suffixes=('_foo','')).query('_merge=="right_only"')
+print(tableB_only)
+tableB_only['date']=tableB_only['date_foo'].replace(np.nan,'02-04-2024')
+
+print(tableB_only)
+
+concat1=pd.concat((tb2,tableB_only[['date','product','unit']]))
+print(concat1)
+
+tableC_only= pd.merge(tb3,concat1,how='outer',on='product',indicator=True,suffixes=('_foo','')).query('_merge=="right_only"')
+print(tableC_only)
+tableC_only['date']=tableC_only['date_foo'].replace(np.nan,'03-04-2024')
+
+print(tableC_only)
+
+concat2=pd.concat((tb3,tableC_only[['date','product','unit']]))
+print(concat2)
+
+concat_final=pd.concat((tb1,concat1,concat2))
+print(concat_final.sort_values(by=['date','product']))
+=====================================================================================================================================================================
+Sql:
+
+Question: Write units sold on the corresponding day and if a specific product is not sold on a particular day enter the unit sold on the previous day for that day.
+Write an SQL code for the same.
+
+CREATE TABLE TBL1 (
+  date varchar(10),
+  product varchar(5),
+  unit varchar(10)
+);
+
+
+INSERT INTO TBL1(date,product,unit) VALUES ('2024-04-01', 'A', 10);
+INSERT INTO TBL1(date,product,unit) VALUES ('2024-04-01', 'B', 20);
+INSERT INTO TBL1(date,product,unit) VALUES ('2024-04-01', 'C', 30);
+INSERT INTO TBL1(date,product,unit) VALUES ('2024-04-01', 'D', 40);
+INSERT INTO TBL1(date,product,unit) VALUES ('2024-04-01', 'E', 50);
+
+CREATE TABLE TBL2 (
+  date varchar(10),
+  product varchar(5),
+  unit varchar(10)
+);
+
+
+INSERT INTO TBL2(date,product,unit) VALUES ('2024-04-02', 'A', 60);
+INSERT INTO TBL2(date,product,unit) VALUES ('2024-04-02', 'C', 70);
+INSERT INTO TBL2(date,product,unit) VALUES ('2024-04-02', 'E', 50);
+
+CREATE TABLE TBL3 (
+  date varchar(10),
+  product varchar(5),
+  unit varchar(10)
+);
+
+
+INSERT INTO TBL3(date,product,unit) VALUES ('2024-04-03', 'B', 90);
+INSERT INTO TBL3(date,product,unit) VALUES ('2024-04-03', 'D', 80);
+
+
+
+SELECT * FROM TBL1;
+SELECT * FROM TBL2;
+SELECT * FROM TBL3;
+
+with cte as (
+select coalesce(TBL2.date,'2024-04-02') as date,tbl1.product,coalesce(tbl2.unit,tbl1.unit) as unit from TBL1 
+full join TBL2 on tbl1.product=tbl2.product
+),
+cte1 as (select coalesce(TBL3.date,'2024-04-03') as date,cte.product,coalesce(tbl3.unit,cte.unit) as unit from tbl3 
+full join cte on cte.product=tbl3.product)
+
+
+select * from tbl1
+union select * from cte
+union select * from cte1
+
+
+
+
