@@ -1,0 +1,158 @@
+Q1: Map the count of character of given string "hello world"
+
+def s_count(s):
+    dict1={}
+    for i in s:
+        if i in dict1:
+            dict1[i]+=1
+        else:
+            dict1[i]=1
+    for k,v in dict1.items():
+        print(k,v)
+    return(1)
+        
+s='hello world'
+print(s_count(s))
+============================================================
+
+Q2: Sort and merge the given two arrays such that output array is also sorted. 
+
+arr1=[7,5,1,10,9]
+arr2=[3,8,2,6,4]
+
+output: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+for i in range(len(arr1)):
+    for j in range(i+1,len(arr1)):
+        if arr1[i]>arr1[j]:
+            arr1[i],arr1[j]=arr1[j],arr1[i]
+print(arr1)
+
+for i in range(len(arr2)):
+    for j in range(i+1,len(arr2)):
+        if arr2[i]>arr2[j]:
+            arr2[i],arr2[j]=arr2[j],arr2[i]
+print(arr2)
+n1=len(arr1)
+n2=len(arr2)
+arr3=[None]*(n1+n2)
+i=0
+j=0
+k=0
+while i<n1 and j<n2:
+    if arr1[i]<arr2[j]:
+        arr3[k]=arr1[i]
+        k+=1
+        i+=1
+    else:
+        arr3[k]=arr2[j]
+        k+=1
+        j+=1
+while i<n1:
+    arr3[k]=arr1[i]
+    k+=1
+    i+=1
+while j<n2:
+    arr3[k]=arr2[j]
+    k+=1
+    j+=1
+print(arr3)
+
+===========================================================
+Q3: Find the elements that are present in tbl1 but not in tbl2.
+input:
+empId      
+-----------
+         10
+         20
+         30
+         40
+         50
+
+empId      
+-----------
+         10
+         30
+         50
+
+output: 
+emp1       
+-----------
+         20
+         40
+
+-- create
+CREATE TABLE EMPLOYEE (
+  empId int,
+);
+
+-- insert
+INSERT INTO EMPLOYEE(empId) VALUES (10);
+INSERT INTO EMPLOYEE(empId) VALUES (20);
+INSERT INTO EMPLOYEE(empId) VALUES (30);
+INSERT INTO EMPLOYEE(empId) VALUES (40);
+INSERT INTO EMPLOYEE(empId) VALUES (50);
+
+
+
+CREATE TABLE EMPLOYEE2 (
+  empId int,
+);
+
+INSERT INTO EMPLOYEE2(empId) VALUES (10);
+INSERT INTO EMPLOYEE2(empId) VALUES (30);
+INSERT INTO EMPLOYEE2(empId) VALUES (50);
+
+-- fetch 
+SELECT * FROM EMPLOYEE;
+SELECT * FROM EMPLOYEE2;
+
+select emp1 from (select e1.empId as emp1,e2.empId as emp2 from EMPLOYEE e1 left join EMPLOYEE2 e2 on e1.empId=e2.empId)
+a where a.emp2 is null
+
+=========================================================================================================
+Q4: Find the sum of -ve integers and positive integers?
+
+Input:
+
+empId      
+-----------
+          5
+         -5
+         -7
+         -2
+          3
+         10
+          1
+output:
+
+ID         
+-----------
+        -14
+         19
+
+-- create
+CREATE TABLE EMPLOYEE (
+  empId int,
+);
+
+-- insert
+INSERT INTO EMPLOYEE(empId) VALUES (5);
+INSERT INTO EMPLOYEE(empId) VALUES (-5);
+INSERT INTO EMPLOYEE(empId) VALUES (-7);
+INSERT INTO EMPLOYEE(empId) VALUES (-2);
+INSERT INTO EMPLOYEE(empId) VALUES (3);
+INSERT INTO EMPLOYEE(empId) VALUES (10);
+INSERT INTO EMPLOYEE(empId) VALUES (1);
+
+-- fetch 
+SELECT * FROM EMPLOYEE;
+
+select sum(empId)as ID from EMPLOYEE where empId<0 
+union all
+select sum(empId) as ID from EMPLOYEE where empId>0 
+    
+
+            
+    
+        
