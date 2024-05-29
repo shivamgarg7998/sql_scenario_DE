@@ -1,0 +1,49 @@
+Balance Parenthesis:
+
+def balance(s):
+    stack=[]
+    for char in s:
+        if char in ['(','[','{']:
+            stack.append(char)
+        
+        else:
+            if not stack:
+                return False
+            current_char=stack.pop()
+            if current_char=='(':
+                if char!=')':
+                    return False
+            if current_char=='[':
+                if char!=']':
+                    return False
+            if current_char=='{':
+                if char!='}':
+                    return False
+    if stack:
+        return False
+    return True
+        
+            
+s='([]){}()[]{]'
+print(balance(s))
+
+==============================================================================================================================================================
+Que:Insert element in sorted array so that array remains sorted.
+
+input: arr=[3,4,8,10] n=7
+output=[3,4,7,8,10]
+
+def add(arr,n):
+    ind=len(arr)
+    for i in range(len(arr)):
+        if arr[i]>n:
+            ind=i
+            break
+    if ind==len(arr):
+        return arr[:] + [n]
+    else:
+        return arr[:ind]+[n]+arr[ind:]
+        
+arr=[3,4,8,10]
+n=7
+print(add(arr,n))
