@@ -1,1 +1,12 @@
+data = [
+    ('apple', 'samsung', 2020, 1, 2, 1, 2),
+    ('samsung', 'apple', 2020, 1, 2, 1, 2),
+    ('apple', 'samsung', 2021, 1, 2, 5, 3),
+    ('samsung', 'apple', 2021, 5, 3, 1, 2),
+    ('google', None, 2020, 5, 9, None, None),
+    ('oneplus', 'nothing', 2020, 5, 9, 6, 3)
+]
+schema = 'brand1 string , brand2 string , year int , custom1 int, custom2 int , custom3 int , custom4 int'
 
+df = spark.createDataFrame(data = data , schema = schema)
+df.show()
