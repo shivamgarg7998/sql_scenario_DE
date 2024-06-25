@@ -1,12 +1,27 @@
-data = [
-    ('apple', 'samsung', 2020, 1, 2, 1, 2),
-    ('samsung', 'apple', 2020, 1, 2, 1, 2),
-    ('apple', 'samsung', 2021, 1, 2, 5, 3),
-    ('samsung', 'apple', 2021, 5, 3, 1, 2),
-    ('google', None, 2020, 5, 9, None, None),
-    ('oneplus', 'nothing', 2020, 5, 9, 6, 3)
-]
-schema = 'brand1 string , brand2 string , year int , custom1 int, custom2 int , custom3 int , custom4 int'
+product_data = [
+ (1, 'Laptops', 'Electronics'),
+ (2, 'Jeans', 'Clothing'),
+ (3, 'Chairs', 'Home Appliances')
+ ]
 
-df = spark.createDataFrame(data = data , schema = schema)
-df.show()
+product_schema = ['product_id', 'product_name', 'category']
+
+product_df = spark.createDataFrame(data = product_data , schema = product_schema)
+product_df.show()
+
+sales_data = [
+ (1, 2019, 1000.00),
+ (1, 2020, 1200.00),
+ (1, 2021, 1100.00),
+ (2, 2019, 500.00),
+ (2, 2020, 600.00),
+ (2, 2021, 900.00),
+ (3, 2019, 300.00),
+ (3, 2020, 450.00),
+ (3, 2021, 400.00)
+ ]
+
+sales_schema = ['product_id', 'year', 'total_sales_revenue']
+
+sales_df = spark.createDataFrame(data = sales_data , schema = sales_schema)
+sales_df.show()
