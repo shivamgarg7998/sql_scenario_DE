@@ -1,27 +1,27 @@
-product_data = [
- (1, 'Laptops', 'Electronics'),
- (2, 'Jeans', 'Clothing'),
- (3, 'Chairs', 'Home Appliances')
- ]
+lift_data = [
+    (1,300),
+    (2,350)
+]
 
-product_schema = ['product_id', 'product_name', 'category']
+lift_schema = "id int , capacity_kg int"
 
-product_df = spark.createDataFrame(data = product_data , schema = product_schema)
-product_df.show()
+lift_df = spark.createDataFrame(data = lift_data , schema = lift_schema)
 
-sales_data = [
- (1, 2019, 1000.00),
- (1, 2020, 1200.00),
- (1, 2021, 1100.00),
- (2, 2019, 500.00),
- (2, 2020, 600.00),
- (2, 2021, 900.00),
- (3, 2019, 300.00),
- (3, 2020, 450.00),
- (3, 2021, 400.00)
- ]
 
-sales_schema = ['product_id', 'year', 'total_sales_revenue']
+lift_passengers_data = [
+    ('Rahul',85,1),
+    ('Adarsh',73,1),
+    ('Riti',95,1),
+    ('Viraj',80,1),
+    ('Vimal',83,2),
+    ('Neha',77,2),
+    ('Priti',73,2),
+    ('Himanshi',85,2)
+]
 
-sales_df = spark.createDataFrame(data = sales_data , schema = sales_schema)
-sales_df.show()
+lift_passengers_schema = "passenger_name string , weight_kg int, lift_id int"
+
+lift_passengers_df = spark.createDataFrame(data = lift_passengers_data , schema = lift_passengers_schema)
+
+lift_df.display()
+lift_passengers_df.display()
