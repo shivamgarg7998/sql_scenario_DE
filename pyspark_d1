@@ -1,19 +1,4 @@
-data_1 = [
-    Row(id=1, name='Mumbai'),
-    Row(id=2, name='Bangalore'),
-    Row(id=3, name='Delhi')
-]
-
-Creating DataFrame 1
-df_1 = spark.createDataFrame(data_1)
-display(df_1)
-
-data_2 = [
-    Row(id=2, name='Bangalore'),
-    Row(id=1, name='Mumbai'),
-    Row(id=4, name='Ayodhya')
-]
-
-Creating DataFrame 2
-df_2 = spark.createDataFrame(data_2)
-display(df_2)
+data = [(1,'I love to play cricket',),(2,'I am into motorbiking',),(3,'What do you like',)]
+schema = ["id", "message"]
+df = spark.createDataFrame(data = data , schema = schema)
+df.show(truncate=  False)
