@@ -1,27 +1,18 @@
-lift_data = [
-    (1,300),
-    (2,350)
+data = [
+    (1, "Arjun Patel", "Male", 30, 60000, "Aarav Sharma"),
+    (2, "Aarav Sharma", "Male", 28, 55000, "Zara Singh"),
+    (3, "Zara Singh", "Female", 35, 70000, "Arjun Patel"),
+    (4, "Priya Reddy", "Female", 32, 65000, "Aarav Sharma"),
+    (1, "Arjun Patel", "Male", 30, 60000, "Aarav Sharma"),
+    (6, "Naina Verma", "Female", 31, 72000, "Arjun Patel"),
+    (1, "Arjun Patel", "Male", 30, 60000, "Aarav Sharma"),
+    (4, "Priya Reddy", "Female", 32, 65000, "Aarav Sharma"),
+    (5, "Aditya Kapoor", "Male", 28, 58000, "Zara Singh"),
+    (10, "Anaya Joshi", "Female", 27, 59000, "Aarav Sharma"),
+    (11, "Rohan Malhotra", "Male", 36, 73000, "Zara Singh"),
+    (3, "Zara Singh", "Female", 35, 70000, "Arjun Patel")
 ]
 
-lift_schema = "id int , capacity_kg int"
 
-lift_df = spark.createDataFrame(data = lift_data , schema = lift_schema)
-
-
-lift_passengers_data = [
-    ('Rahul',85,1),
-    ('Adarsh',73,1),
-    ('Riti',95,1),
-    ('Viraj',80,1),
-    ('Vimal',83,2),
-    ('Neha',77,2),
-    ('Priti',73,2),
-    ('Himanshi',85,2)
-]
-
-lift_passengers_schema = "passenger_name string , weight_kg int, lift_id int"
-
-lift_passengers_df = spark.createDataFrame(data = lift_passengers_data , schema = lift_passengers_schema)
-
-lift_df.display()
-lift_passengers_df.display()
+df = spark.createDataFrame(data, schema=schema)
+df.show()
