@@ -1,40 +1,16 @@
-data = [
-(1, '2024-03-01'),
-(1, '2024-03-02'),
-(1, '2024-03-03'),
-(1, '2024-03-04'),
-(1, '2024-03-06'),
-(1, '2024-03-10'),
-(1, '2024-03-11'),
-(1, '2024-03-12'),
-(1, '2024-03-13'),
-(1, '2024-03-14'),
-(1, '2024-03-20'),
-(1, '2024-03-25'),
-(1, '2024-03-26'),
-(1, '2024-03-27'),
-(1, '2024-03-28'),
-(1, '2024-03-29'),
-(1, '2024-03-30'),
-(2, '2024-03-01'),
-(2, '2024-03-02'),
-(2, '2024-03-03'),
-(2, '2024-03-04'),
-(3, '2024-03-01'),
-(3, '2024-03-02'),
-(3, '2024-03-03'),
-(3, '2024-03-04'),
-(3, '2024-03-04'),
-(3, '2024-03-04'),
-(3, '2024-03-05'),
-(4, '2024-03-01'),
-(4, '2024-03-02'),
-(4, '2024-03-03'),
-(4, '2024-03-04'),
-(4, '2024-03-04')
-]
+Subject: Request to Include Joining Bonus in Offer Letter
 
-schema = "user_id int , login_date string"
+Dear [HR Manager's Name],
 
-df = spark.createDataFrame(data = data , schema = schema)
-df.display()
+I hope this message finds you well. I am writing to request the inclusion of a joining bonus in my official offer letter for the position of [Your Position] at [Company Name].
+
+During our discussions and as indicated in preliminary communications, it was mentioned that a joining bonus would be part of the compensation package. To ensure clarity and alignment with expectations, I kindly request that the offer letter be updated to reflect the details of the joining bonus, including the amount and any relevant terms or conditions.
+
+Your assistance in updating the offer letter would be greatly appreciated. Please let me know if there are any additional steps or information required from my side to facilitate this process.
+
+Thank you for your attention to this matter. I look forward to your response and to the opportunity of joining the team at [Company Name].
+
+Best regards,
+
+[Your Full Name]
+[Your Contact Information]
