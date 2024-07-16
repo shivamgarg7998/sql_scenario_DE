@@ -1,16 +1,348 @@
-Subject: Request to Include Joining Bonus in Offer Letter
+%pyspark
+#day1
+from pyspark.sql.functions import col,when,concat,row_number
+from pyspark.sql.window import Window
+data = [
+    ('apple', 'samsung', 2020, 1, 2, 1, 2),
+    ('samsung', 'apple', 2020, 1, 2, 1, 2),
+    ('apple', 'samsung', 2021, 1, 2, 5, 3),
+    ('samsung', 'apple', 2021, 5, 3, 1, 2),
+    ('google', None, 2020, 5, 9, None, None),
+    ('oneplus', 'nothing', 2020, 5, 9, 6, 3)
+]
+schema = 'brand1 string , brand2 string , year int , custom1 int, custom2 int , custom3 int , custom4 int'
 
-Dear [HR Manager's Name],
+df = spark.createDataFrame(data = data , schema = schema)
+df1=df.withColumn('part_id',when(col('brand1')<col('brand2'),concat(col('brand1'),col('brand2'),col('year'))).otherwise(concat(col('brand2'),col('brand1'),col('year'))))
+win=Window.partitionBy(col("part_id")).orderBy(col("part_id"))
+df2=df1.withColumn("rn",row_number().over(win))
+df3=df2.select('brand1','brand2','year','custom1','custom2','custom3','custom4').filter((col("rn")==1) |((col("custom1")!=col("custom3")) | (col("custom2")!=col("custom4")) ))
+df.show()
+df2.show()
+df3.show()
 
-I hope this message finds you well. I am writing to request the inclusion of a joining bonus in my official offer letter for the position of [Your Position] at [Company Name].
+--------------------------------------------------------------------------------------
+%pyspark
+#deloitte
+from pyspark.sql.functions import col,when,concat,row_number,lead,lag
+from pyspark.sql.window import Window
+product_data = [
+ (1, 'Laptops', 'Electronics'),
+ (2, 'Jeans', 'Clothing'),
+ (3, 'Chairs', 'Home Appliances')
+ ]
 
-During our discussions and as indicated in preliminary communications, it was mentioned that a joining bonus would be part of the compensation package. To ensure clarity and alignment with expectations, I kindly request that the offer letter be updated to reflect the details of the joining bonus, including the amount and any relevant terms or conditions.
+product_schema = ['product_id', 'product_name', 'category']
+sales_data = [
+ (1, 2019, 1000.00),
+ (1, 2020, 1200.00),
+ (1, 2021, 1100.00),
+ (2, 2019, 500.00),
+ (2, 2020, 600.00),
+ (2, 2021, 900.00),
+ (3, 2019, 300.00),
+ (3, 2020, 450.00),
+ (3, 2021, 400.00)
+ ]
 
-Your assistance in updating the offer letter would be greatly appreciated. Please let me know if there are any additional steps or information required from my side to facilitate this process.
+sales_schema = ['product_id', 'year', 'total_sales_revenue']
 
-Thank you for your attention to this matter. I look forward to your response and to the opportunity of joining the team at [Company Name].
+sales_df = spark.createDataFrame(data = sales_data , schema = sales_schema)
+product_df = spark.createDataFrame(data = product_data , schema = product_schema)
+product_df.show()
+sales_df.show()
+win=Window.partitionBy(col("product_id")).orderBy(col("year"))
+df1=sales_df.withColumn("lag_revenue",lag(col("total_sales_revenue"),1,0).over(win))
+df2=df1.withColumn("rev_diff",col("total_sales_revenue")-col("lag_revenue"))
+df3=df2.groupBy(col("product_id")).min("rev_diff").withColumnRenamed("min(rev_diff)","min_revenue").filter(col("min_revenue")>0)
+df4=df3.join(product_df,on="product_id",how='inner').select("product_id","product_name","category")
+df1.show()
+df2.show()
+df3.show()
+df4.show()
 
-Best regards,
 
-[Your Full Name]
-[Your Contact Information]
+-------------------------------------------------------------------------------------------
+
+%pyspark
+#capgemini day8
+from pyspark.sql.functions import col,when,concat,row_number,lead,lag,sum,collect_list,concat_ws
+from pyspark.sql.window import Window
+lift_data = [
+    (1,300),
+    (2,350)
+]
+
+lift_schema = "id int , capacity_kg int"
+
+lift_df = spark.createDataFrame(data = lift_data , schema = lift_schema)
+
+
+lift_passengers_data = [
+    ('Rahul',85,1),
+    ('Adarsh',73,1),
+    ('Riti',95,1),
+    ('Viraj',80,1),
+    ('Vimal',83,2),
+    ('Neha',77,2),
+    ('Priti',73,2),
+    ('Himanshi',85,2)
+]
+
+lift_passengers_schema = "passenger_name string , weight_kg int, lift_id int"
+lift_passengers_df = spark.createDataFrame(data = lift_passengers_data , schema = lift_passengers_schema)
+df1=lift_passengers_df.join(lift_df,lift_passengers_df.lift_id==lift_df.id,how='inner')
+win=Window.partitionBy(col("lift_id")).orderBy(col("weight_kg"))
+df2=df1.withColumn("sum1",sum(col("weight_kg")).over(win)).filter(when(col("lift_id")==1,col("sum1")<300).otherwise(col("sum1")<350))
+df3=df2.groupBy(col("lift_id")).agg(concat_ws(",",collect_list(col("passenger_name"))))
+
+lift_df.show()
+lift_passengers_df.show()
+df1.show()
+df2.show()
+df3.show(truncate=False)
+
+-------------------------------------------------------------------------------------
+#remove column having null records
+%pyspark
+from pyspark.sql.functions import *
+data=[(1,None,None),(2,3,None),(None,None,None)]
+schema="col1 int,col2 int,col3 int"
+df=spark.createDataFrame(data,schema)
+df1=df.agg(*[count(c).alias(c) for c in df.columns])
+non_null_cols= [c for c in df1.columns if df1[[c]].first()[c]>0]
+df1=df.select(*non_null_cols)
+df.show()
+df1.show()
+
+------------------------------------------------------------------------------
+
+%pyspark
+from pyspark.sql.functions import *
+from pyspark.sql.types import *
+cols=['col_'+str(i) for i in range(1,11)]
+data=[ tuple(range(i,i+10)) for i in range(1,11)]
+df=spark.createDataFrame(data,cols)
+new_cols=['col__'+str(i) for i in range(1,11)]
+for col1,new_col in zip(cols,new_cols):
+    df1=df.withColumnRenamed(col1,new_col)
+
+df1.show()
+
+----------------------------------------------------------
+
+%pyspark
+from pyspark.sql.functions import *
+from pyspark.sql.types import *
+from pyspark.sql.window import Window
+schema = StructType([
+    StructField("emp_id", IntegerType(), True),
+    StructField("emp_name", StringType(), True),
+    StructField("emp_gender", StringType(), True),
+    StructField("emp_age", IntegerType(), True),
+    StructField("emp_salary", IntegerType(), True),
+    StructField("emp_manager", StringType(), True)
+])
+data = [
+    (1, "Arjun Patel", "Male", 30, 60000, "Aarav Sharma"),
+    (2, "Aarav Sharma", "Male", 28, 55000, "Zara Singh"),
+    (3, "Zara Singh", "Female", 35, 70000, "Arjun Patel"),
+    (4, "Priya Reddy", "Female", 32, 65000, "Aarav Sharma"),
+    (1, "Arjun Patel", "Male", 30, 60000, "Aarav Sharma"),
+    (6, "Naina Verma", "Female", 31, 72000, "Arjun Patel"),
+    (1, "Arjun Patel", "Male", 30, 60000, "Aarav Sharma"),
+    (4, "Priya Reddy", "Female", 32, 65000, "Aarav Sharma"),
+    (5, "Aditya Kapoor", "Male", 28, 58000, "Zara Singh"),
+    (10, "Anaya Joshi", "Female", 27, 59000, "Aarav Sharma"),
+    (11, "Rohan Malhotra", "Male", 36, 73000, "Zara Singh"),
+    (3, "Zara Singh", "Female", 35, 70000, "Arjun Patel")
+]
+
+df = spark.createDataFrame(data=data, schema=schema)
+win=Window.partitionBy(col('emp_id')).orderBy(col('emp_salary'))
+df1=df.withColumn("rn",row_number().over(win)).filter(col("rn")>1).drop(col("rn")).dropDuplicates()
+
+df.show()
+df1.show()
+
+--------------------------------------------------------------------
+
+%pyspark
+data_1 = [
+    Row(id=1, name='Mumbai'),
+    Row(id=2, name='Bangalore'),
+    Row(id=3, name='Delhi')
+]
+
+df1 = spark.createDataFrame(data_1)
+data_2 = [
+    Row(id=2, name='Bangalore'),
+    Row(id=1, name='Mumbai'),
+    Row(id=4, name='Ayodhya')
+]
+df2 = spark.createDataFrame(data_2)
+df3=df1.join(df2,on="id",how="left_anti")
+df1.show()
+df2.show()
+df3.show()
+--------------------------------------------------------------------
+%pyspark
+from pyspark.sql.functions import *
+from pyspark.sql.types import *
+data = [(1,'I love to play cricket',),(2,'I am into motorbiking',),(3,'What do you like',)]
+schema = ["id", "message"]
+df = spark.createDataFrame(data = data , schema = schema)
+df1=df.withColumn("msg1",lower(col("message")))
+df2=df1.withColumn("consonants",regexp_replace(col("msg1"),'a|e|i|o|u|\s','')).drop("msg1")
+df3=df2.withColumn("count_",length(col("consonants")))
+df.show(truncate=  False)
+df3.show(truncate=  False)
+-----------------------------------------------------------------------
+
+%pyspark
+#day2
+from pyspark.sql.functions import *
+from pyspark.sql.types import *
+from pyspark.sql.window import Window
+data = [
+    (20124 ,'2020-01-10'),
+    (40133 ,'2020-01-15'),
+    (65005 ,'2020-01-20'),
+    (30005 ,'2020-02-08'),
+    (35015 ,'2020-02-19'),
+    (15015 ,'2020-03-03'),
+    (35035 ,'2020-03-10'),
+    (49099 ,'2020-03-14'),
+    (84045 ,'2020-03-20'),
+    (100106 ,'2020-03-31'),
+    (17015 ,'2020-04-04'),
+    (36035 ,'2020-04-11'),
+    (50099 ,'2020-04-13'),
+    (87045 ,'2020-04-22'),
+    (101101 ,'2020-04-30'),
+    (40015 ,'2020-05-01'),
+    (54035 ,'2020-05-09'),
+    (71099 ,'2020-05-14'),
+    (82045 ,'2020-05-21'),
+    (90103 ,'2020-05-25'),
+    (99103 ,'2020-05-31'),
+    (11015 ,'2020-06-03'),
+    (28035 ,'2020-06-10'),
+    (38099 ,'2020-06-14'),
+    (45045 ,'2020-06-20'),
+    (36033 ,'2020-07-09'),
+    (40011 ,'2020-07-23'),
+    (25001 ,'2020-08-12'),
+    (29990 ,'2020-08-26'),
+    (20112 ,'2020-09-04'),
+    (43991 ,'2020-09-18'),
+    (51002 ,'2020-09-29'),
+    (26587 ,'2020-10-25'),
+    (11000 ,'2020-11-07'),
+    (35002 ,'2020-11-16'),
+    (56010 ,'2020-11-28'),
+    (15099 ,'2020-12-02'),
+    (38042 ,'2020-12-11'),
+    (73030 ,'2020-12-26')
+]
+
+schema = "cases_reported int , dates string"
+df = spark.createDataFrame(data= data , schema = schema)
+df1=df.withColumn("month",month("dates"))
+df2=df1.groupBy("month").agg(sum("cases_reported").alias("sum1")).orderBy("month")
+win=Window.orderBy("month")
+df3=df2.withColumn("sum2",sum("sum1").over(win))
+df4=df3.withColumn("lag_sum",lag("sum2",1).over(win))
+df5=df4.withColumn("%increase",(col("sum1")*100)/col("lag_sum")).select('*',coalesce("%increase",lit("-")).alias("increase%")).drop("%increase")
+
+df.show()
+df2.show()
+df3.show()
+df4.show()
+df5.show()
+--------------------------------------------------------------------------------------
+%pyspark
+#day3
+from pyspark.sql.functions import *
+from pyspark.sql.types import *
+from pyspark.sql.window import Window
+data = [
+(1, '2024-03-01'),
+(1, '2024-03-02'),
+(1, '2024-03-03'),
+(1, '2024-03-04'),
+(1, '2024-03-06'),
+(1, '2024-03-10'),
+(1, '2024-03-11'),
+(1, '2024-03-12'),
+(1, '2024-03-13'),
+(1, '2024-03-14'),
+(1, '2024-03-20'),
+(1, '2024-03-25'),
+(1, '2024-03-26'),
+(1, '2024-03-27'),
+(1, '2024-03-28'),
+(1, '2024-03-29'),
+(1, '2024-03-30'),
+(2, '2024-03-01'),
+(2, '2024-03-02'),
+(2, '2024-03-03'),
+(2, '2024-03-04'),
+(3, '2024-03-01'),
+(3, '2024-03-02'),
+(3, '2024-03-03'),
+(3, '2024-03-04'),
+(3, '2024-03-04'),
+(3, '2024-03-04'),
+(3, '2024-03-05'),
+(4, '2024-03-01'),
+(4, '2024-03-02'),
+(4, '2024-03-03'),
+(4, '2024-03-04'),
+(4, '2024-03-04')
+]
+
+schema = "user_id int , login_date string"
+
+df = spark.createDataFrame(data = data , schema = schema)
+df=df.withColumn("login1_date",to_date("login_date","yyyy-MM-dd"))
+df1=df.withColumn("dr",dense_rank().over(Window.partitionBy("user_id").orderBy("login1_date"))).withColumn("group_",expr("date_sub(login1_date,dr)"))
+df2=df1.groupBy("user_id","group_").agg(min(col("login1_date")).alias("start_date"),max(col("login1_date")).alias("end_date"))
+df3=df2.withColumn("con_days",datediff("end_date","start_date")+1).filter(col("con_days")>=5).orderBy("user_id","start_date").drop("group_")
+df.show()
+df.printSchema()
+df1.show()
+df2.show()
+df3.show()
+
+-------------------------------------------------------------------------------------
+%pyspark
+input_data = "Azar|BE|8|BigData|8569841053|Ramesh|Btech|3|java|9416481052"
+tokens = input_data.split('|')
+print(tokens)
+chunks = [tokens[i:i+5] for i in range(0, len(tokens), 5)]
+print(chunks)
+df = spark.createDataFrame(chunks, ["Name", "Education", "Exp", "Tech", "Mob_Num"])
+df = df.selectExpr("Name as Name", 
+                   "Education as Education", 
+                   "Exp as exp", 
+                   "Tech as tech", 
+                   "Mob_Num as mob_num")
+
+# Showing the DataFrame
+df.show(truncate=False)
+
+-----------------------------------------------------------------------------
+
+%pyspark
+from pyspark.sql.functions import *
+df1=spark.createDataFrame(["1","0","1",None,None], "string").toDF("A")
+df2=spark.createDataFrame(["1","0","1",2,None], "string").toDF("B")
+df3=df1.join(df2,df1['A']==df2['B'],'inner').select("A","B")
+df4=df1.join(df2,df1['A']==df2['B'],'left_outer').select("A","B")
+df5=df1.join(df2,df1['A']==df2['B'],'right_outer').select("A","B")
+df1.show()
+df2.show()
+df3.show()
+df4.show()
+df5.show()
