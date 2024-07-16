@@ -1,0 +1,193 @@
+ids=[1,2,3,4,6,8,10]
+min_id=min(ids)
+max_id=max(ids)
+min_max_ids=range(min_id,max_id+1)
+print(min_max_ids)
+ids_left=set(min_max_ids)-set(ids)
+print(ids_left)
+
+--------------------------------
+
+def flat_l(l):
+    l1=[]
+    for i in l:
+        if type(i) is list:
+            l1.extend(flat_l(i))
+            
+        else:
+            l1.append(i)
+    return(l1)
+    
+l=[2,3,[10,20,40],5]
+print(flat_l(l))
+------------------------------------------
+def factorial(n):
+    if n<=1:
+        return 1
+    else:
+
+        return(n*factorial(n-1))
+factorial(5)
+
+--------------------------
+def facto(n):
+    fact=1
+    for i in range(n,1,-1):
+        fact=i*fact
+    return(fact)
+facto(10)
+-----------------------------
+def palindrome(s):
+    if s[:]==s[::-1]:
+        m=True
+    else:
+        m=False
+    return(m)
+
+s='namanu'
+palindrome(s)
+--------------------
+def add(l):
+    l1=list(set(l))
+    for i in l:
+        if -i in l1:
+            m=True
+        else:
+            m=False
+    return(m)
+l=[1,2,3,4,-1]
+add(l)
+----------------------
+def unique(str1):
+    dict1={}
+    for i in str1.split():
+        if i not in dict1:
+            dict1[i]=1
+        else:
+            dict1[i]+=1
+    m=[k for k,v in dict1.items() if (v==1)]
+    return(m[0])
+        
+    
+
+str1="ram ram mohan"
+unique(str1)
+----------------------------
+def even(l):
+    return([l[i] for i in range(len(l)) if (l[i]%2==0 and l[i+1]%2==1)] )
+
+
+
+l=[1,2,3,4,5,6,7,10,12,14,19]
+even(l)
+---------------------------------
+def digit_sort(l):
+    dict={}
+    for i in l:
+        c=''
+        for j in i:
+            if j.isdigit():
+                c=c+j
+                
+        p=int(c)        
+        dict[i]=p
+    m=[k for k,v in sorted(dict.items(), key=lambda x:x[1])]
+        
+                
+                
+    return(m)   
+    
+l=['Zaid90','shyam60','ram20']
+digit_sort(l)
+-------------------------------------
+def month_name(l):
+    dict1={'01':'jan','02':'feb'}
+    l1=[]
+    
+    for i in l:
+        m=i.split('-')[1]
+        p=i.split('-')[0]+'-'+dict1[m]+'-'+i.split('-')[2]
+        l1.append(p)
+    return(l1)
+    
+    
+l=['01-01-2023','09-02-2021']
+month_name(l)
+-----------------------------------
+def cnt_digit(l):
+    l1=[]
+    dict1={}
+    
+    for i in l:
+        l1.extend(i)
+    print(l1)
+    for j in l1:
+        if j not in dict1:
+            dict1[j]=1
+        else:
+            dict1[j]+=1
+    return(dict1)
+
+l=[[1,2],[3,4],[2,3],[5,1]]
+cnt_digit(l)
+------------------------------------
+def student(l):
+    max_marks=max(v for k,v in l)
+    m=[k for k,v in l if v==max_marks]
+    return(m[0])
+
+
+l=[('ram',60),('vinod',80)]
+student(l)
+
+---------------------------------------
+def c_cnt(s):
+    
+    cnt=0
+    char=s[0]
+    l=[]
+    for i in s:
+        
+        if i==char:
+            cnt+=1
+        else:
+            l.append(cnt)
+            cnt=1
+            
+            char=i    
+    l.append(cnt)      
+    return(l)
+            
+
+
+s="bbbbcccaad"
+c_cnt(s)
+------------------------------------------
+
+ student={'ajay':1000,'raj':2000,'mohan':9000}
+key_list=list(student.keys())
+print(key_list)
+print(key_list[0]+ ':' +str(student[key_list[0]]))
+----------------------------------------------
+def sum_add(l,t):
+    for i in range(len(l)):
+        for j in range(i+1,len(l)):
+            if l[i]+l[j]==t:
+                return(i,j)
+                
+l=[3,2,4]
+t=6
+print(sum_add(l,t))
+-------------------------------------------------
+def word_cnt(s):
+    dict={}
+    for i in s:
+        if i not in dict:
+            cnt=1
+            dict[i]=cnt
+        else:
+            cnt+=1
+    return(dict)
+s='hello world'
+print(word_cnt(s))
+---------------------------------------------
