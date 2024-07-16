@@ -346,3 +346,41 @@ df2.show()
 df3.show()
 df4.show()
 df5.show()
+-----------------------------------------------------------------------------
+%pyspark
+s1=[(1,"sagar,garg"),(2,"shivam,gupta"),(3,"kunal,verma"),(4,"kim,rao")]
+columns=["ID","Name"]
+df1=spark.createDataFrame(s1,schema=columns)
+df2=df1.withColumn("New_Name",split(col("Name"),","))
+df3=df2.select(col("ID"),explode(col("New_Name")).alias("Name"))
+df1.show()
+df2.show()
+df3.show()
+
+------------------------------------------------------
+%pyspark
+from pyspark.sql.window import Window
+from pyspark.sql.functions import *
+data=[('ram',2,75000),('rohan',2,80000),('pankaj',2,80000),('steven',2,70000),('maria',4,70000),('bro',4,85000),('kim',4,55000),('gabru',4,55000),('lucky',5,60000),('pummy',5,65000)]
+schema8=["emp_name","dept_id","salary"]
+df=spark.createDataFrame(data,schema8)
+df1=df.groupBy("dept_id").agg(max("salary").alias("max_sal"),min("salary").alias("min_sal")).withColumnRenamed("dept_id","dept_id_1")
+df2=df.join(df1,df.dept_id==df1.dept_id_1,'inner')
+df3=df2.filter((col("salary")==col("max_sal")) | (col("salary")==col("min_sal")))
+df4=df3.groupBy("dept_id","salary").agg(collect_set("emp_name")).orderBy("dept_id")
+df.show()
+df1.show(truncate=0)
+df3.show()
+df4.show()
+------------------------------------------------------------------
+%pyspark
+from pyspark.sql.functions import *
+data=[('Goa','','AP'),('','AP',None),(None,'','Blr')]
+schema=['City1','City2','City3']
+df=spark.createDataFrame(data,schema)
+df1=df.withColumn("City1",when(col("City1")=="",None).otherwise(col("City1"))).withColumn("City2",when(col("City2")=="",None).otherwise(col("City2"))).withColumn("City3",when(col("City3")=="",None).otherwise(col("City3")))
+df2=df1.withColumn("result",coalesce(col("City1"),col("City2"),col("City3"))).select("result")
+df.show()
+df1.show()
+df2.show()
+----------------------------------------------------
