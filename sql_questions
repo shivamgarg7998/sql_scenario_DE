@@ -1,0 +1,90 @@
+1. What are the different types of SQL commands?
+•	Answer: SQL commands are categorized into five major types:
+o	DDL (Data Definition Language): CREATE, ALTER, DROP, TRUNCATE, RENAME
+o	DML (Data Manipulation Language): SELECT, INSERT, UPDATE, DELETE
+o	DCL (Data Control Language): GRANT, REVOKE
+o	TCL (Transaction Control Language): COMMIT, ROLLBACK, SAVEPOINT
+o	DQL (Data Query Language): SELECT (used for querying data)
+2. What is the difference between INNER JOIN and LEFT JOIN?
+•	Answer:
+o	INNER JOIN: Returns records that have matching values in both tables.
+o	LEFT JOIN (or LEFT OUTER JOIN): Returns all records from the left table and the matched records from the right table. If there is no match, NULL values are returned for columns from the right table.
+3. What is a primary key?
+•	Answer: A primary key is a column or a set of columns in a database table that uniquely identifies each record in that table. It cannot have NULL values.
+4. What is a foreign key?
+•	Answer: A foreign key is a column or set of columns in one table that refers to the primary key in another table. It is used to establish and enforce a link between the data in the two tables.
+5. What is normalization? Explain its types.
+•	Answer: Normalization is the process of organizing the fields and tables of a database to minimize redundancy and dependency. The main types are:
+o	1st Normal Form (1NF): Eliminate repeating groups; each column contains atomic values.
+o	2nd Normal Form (2NF): Remove partial dependencies (i.e., every non-prime attribute is fully dependent on the primary key).
+o	3rd Normal Form (3NF): Remove transitive dependencies (i.e., non-prime attributes depend only on the primary key).
+o	Higher normal forms (BCNF, 4NF, 5NF) are also possible, but are less commonly required at a fresher level.
+6. What is a JOIN? What are the different types of joins?
+•	Answer: A JOIN is used to combine rows from two or more tables based on a related column. Types of joins include:
+o	INNER JOIN: Returns only matching rows from both tables.
+o	LEFT JOIN (OUTER JOIN): Returns all rows from the left table, and matching rows from the right table.
+o	RIGHT JOIN (OUTER JOIN): Returns all rows from the right table, and matching rows from the left table.
+o	FULL OUTER JOIN: Returns all rows when there is a match in either the left or the right table.
+o	CROSS JOIN: Returns the Cartesian product of both tables (all combinations of rows).
+7. What is an index in SQL?
+•	Answer: An index is a database object that improves the speed of data retrieval operations on a table. It is created on a column or a set of columns to optimize query performance.
+8. What is a GROUP BY clause in SQL?
+•	Answer: The GROUP BY clause groups rows that have the same values into summary rows, like "total" or "average". It is often used with aggregate functions like COUNT, SUM, AVG, MAX, MIN.
+9. What is the difference between WHERE and HAVING clause?
+•	Answer:
+o	WHERE is used to filter records before any grouping is performed.
+o	HAVING is used to filter records after the GROUP BY operation has been performed.
+10. What is the difference between DROP, DELETE and TRUNCATE?
+•	Answer:
+o	DELETE: Removes rows from a table based on a condition and logs each row deletion. It can be rolled back.
+o	TRUNCATE: Removes all rows from a table without logging individual row deletions, and it cannot be rolled back (in most cases).
+o	DROP: Removes all rows as well as table structure.
+o	Syntax: DROP TABLE TABLE_NAME
+DELETE FROM table_name WHERE condition;
+TRUNCATE TABLE table_name;
+11. How would you retrieve unique records from a table in SQL?
+•	Answer: You can use the DISTINCT keyword to return unique records.
+sql
+Copy code
+SELECT DISTINCT column_name FROM table_name;
+12. What is the difference between a view and a table?
+•	Answer:
+o	Table: A physical object that stores data.
+o	View: A virtual table that is based on the result of a SELECT query. It does not store data itself but retrieves data from underlying tables.
+13. What is the difference between ROW_NUMBER(), RANK(), and DENSE_RANK() in SQL?
+•	Answer:
+o	ROW_NUMBER(): Assigns a unique number to each row in the result set, starting from 1. If there are ties, each row still gets a distinct number, with no gaps.
+o	RANK(): Assigns a rank to each row within a partition of the result set, where rows with the same values receive the same rank, but there will be gaps in the ranks for tied rows.
+o	DENSE_RANK(): Similar to RANK(), but there are no gaps in the ranking. If two rows are tied with the same rank, the next rank will be the immediate next value.
+Example:
+SELECT salary, 
+       ROW_NUMBER() OVER (ORDER BY salary DESC) AS row_number,
+       RANK() OVER (ORDER BY salary DESC) AS rank,
+       DENSE_RANK() OVER (ORDER BY salary DESC) AS dense_rank
+FROM employees;
+14. How would you use ROW_NUMBER() to find the highest salary per department?
+•	Answer: You can use ROW_NUMBER() to assign a rank to employees within each department, ordered by salary, and then filter for the top-ranked employee in each department.
+Example:
+SELECT employee_id, department, salary
+FROM (
+    SELECT employee_id, department, salary,
+           ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) AS row_num
+    FROM employees
+) AS ranked_employees
+WHERE row_num = 1;
+In this query, the ROW_NUMBER() function is partitioned by department and ordered by salary DESC. The outer query filters only those employees whose row_num equals 1, which corresponds to the employee with the highest salary in each department.
+
+
+
+Introduce Yourself:
+Hello, my name is Neha, and I completed my BTech in Electronics and Communication.
+I have always been passionate about handling and organizing data, and I’ve applied this interest through hands-on project using SQL and python.
+Solving SQL queries fascinates me a lot.
+I’m excited about the opportunity to apply my technical skills and contribute to Company as I continue to grow professionally.
+What made you to do a job after 10 years of B.Tech?
+I took a break due to personal reasons as during those times family didn’t support to locate to Pune and after that I got engaged and things are not going my way.
+but I’ve been actively refreshing my skills in programming languages like Python and SQL through online platforms like Coursera and Udemy. I’ve also been involved in open-source projects to keep my coding skills sharp. I’m confident that my ability to adapt and the new skills I’ve gained will help me make a smooth transition into this role.
+Links:
+Window Functions: https://youtu.be/xMWEVFC4FOk?si=F1jdF3L_bd-jCObT 
+Hacker Rank: Dashboard | HackerRank
+
